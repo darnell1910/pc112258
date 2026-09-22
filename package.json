@@ -1,0 +1,35 @@
+{
+  "name": "pc112258",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Open Breweries DB web application that promotes the Open Brewery DB catalog of breweries and taprooms in the United States.",
+  "author": "__AUTHOR_NAME__",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "breweries",
+    "open-brewery-db",
+    "domain-driven-design",
+    "vue",
+    "primevue",
+    "vite"
+  ],
+  "dependencies": {
+    "@primeuix/themes": "^3.0.1",
+    "axios": "^1.20.0",
+    "primeflex": "^4.0.0",
+    "primeicons": "^8.0.1",
+    "primevue": "^5.0.1",
+    "vue": "^3.5.43",
+    "vue-i18n": "^11.4.12"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
+    "vite": "^8.3.0"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "application": {
+    "name": "Open Breweries DB",
+    "logo-alt": "Logotipo de Open Breweries DB",
+    "toolbar-label": "Barra de herramientas de la aplicación",
+    "main-label": "Contenido principal"
+  },
+  "language": {
+    "label": "Idioma de la interfaz",
+    "options": {
+      "en": "EN",
+      "es": "ES"
+    }
+  },
+  "brewery-list": {
+    "title": "Lista de Cervecerías",
+    "label": "Lista de cervecerías",
+    "loading": "Cargando cervecerías...",
+    "empty-title": "No se encontraron cervecerías",
+    "empty-description": "El catálogo no devolvió ninguna cervecería para esta consulta."
+  },
+  "brewery": {
+    "logo-alt": "Logotipo de {name}",
+    "card-label": "Cervecería {name}",
+    "information-label": "Detalles de {name}",
+    "no-website": "Sitio web no disponible",
+    "go-to-website": "Ir al Sitio Web",
+    "go-to-website-label": "Abrir el sitio web de {name} en una nueva pestaña",
+    "share-information": "Compartir Información",
+    "share-information-label": "Compartir la información de {name}",
+    "share-succeeded": "Información compartida correctamente",
+    "link-copied": "Enlace copiado al portapapeles",
+    "share-failed": "No se pudo compartir la información",
+    "labels": {
+      "brewery-type": "Tipo de Cervecería",
+      "street": "Calle",
+      "city": "Ciudad",
+      "state-province": "Estado / Provincia",
+      "postal-code": "Código Postal",
+      "country": "País",
+      "phone": "Teléfono",
+      "coordinates": "Coordenadas"
+    },
+    "types": {
+      "micro": "Micro Cervecería",
+      "nano": "Nano Cervecería",
+      "regional": "Cervecería Regional",
+      "brewpub": "Cervecería Bar",
+      "large": "Gran Cervecería",
+      "planning": "En Planificación",
+      "bar": "Bar",
+      "contract": "Cervecería por Contrato",
+      "proprietor": "Propietario",
+      "closed": "Cerrada",
+      "taproom": "Taberna"
+    }
+  },
+  "unavailable-content": {
+    "title": "Contenido no disponible",
+    "description": "No se pudo obtener la información de las cervecerías. Inténtelo nuevamente más tarde."
+  },
+  "footer": {
+    "label": "Pie de página de la aplicación",
+    "copyright": "Copyright © 2026 Open Brewery DB. Todos los derechos reservados.",
+    "developed-by": "Desarrollado por"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "application": {
+    "name": "Open Breweries DB",
+    "logo-alt": "Open Breweries DB logo",
+    "toolbar-label": "Application toolbar",
+    "main-label": "Main content"
+  },
+  "language": {
+    "label": "Interface language",
+    "options": {
+      "en": "EN",
+      "es": "ES"
+    }
+  },
+  "brewery-list": {
+    "title": "Brewery List",
+    "label": "List of breweries",
+    "loading": "Loading breweries...",
+    "empty-title": "No breweries found",
+    "empty-description": "The catalog did not return any brewery for this request."
+  },
+  "brewery": {
+    "logo-alt": "Logo of {name}",
+    "card-label": "Brewery {name}",
+    "information-label": "Details of {name}",
+    "no-website": "Website not available",
+    "go-to-website": "Go to Website",
+    "go-to-website-label": "Open the website of {name} in a new tab",
+    "share-information": "Share Information",
+    "share-information-label": "Share the information of {name}",
+    "share-succeeded": "Information shared successfully",
+    "link-copied": "Link copied to the clipboard",
+    "share-failed": "The information could not be shared",
+    "labels": {
+      "brewery-type": "Brewery Type",
+      "street": "Street",
+      "city": "City",
+      "state-province": "State / Province",
+      "postal-code": "Postal Code",
+      "country": "Country",
+      "phone": "Phone",
+      "coordinates": "Coordinates"
+    },
+    "types": {
+      "micro": "Micro Brewery",
+      "nano": "Nano Brewery",
+      "regional": "Regional Brewery",
+      "brewpub": "Brewpub",
+      "large": "Large Brewery",
+      "planning": "In Planning",
+      "bar": "Bar",
+      "contract": "Contract Brewery",
+      "proprietor": "Proprietor",
+      "closed": "Closed",
+      "taproom": "Taproom"
+    }
+  },
+  "unavailable-content": {
+    "title": "Content unavailable",
+    "description": "The brewery information could not be retrieved. Please try again later."
+  },
+  "footer": {
+    "label": "Application footer",
+    "copyright": "Copyright © 2026 Open Brewery DB. All rights reserved.",
+    "developed-by": "Developed by"
+  }
+}
