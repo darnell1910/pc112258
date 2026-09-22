@@ -6,23 +6,11 @@ import { Brewery } from '@/breweries/domain/model/brewery.entity.js';
 import BreweryInformation from '@/breweries/presentation/components/brewery-information.vue';
 
 /**
- * @summary Card that presents a single brewery of the Open Brewery DB catalog.
- * @remarks
- * Displays the logo of the brewery on top, its name as the title and its
- * website as the subtitle, delegates the remaining attributes to the
- * BreweryInformation component, and offers the navigation and sharing actions
- * in the footer of the card.
+ * Card of a single brewery: logo on top, name as title, website as subtitle,
+ * details as content and the two actions in the footer.
+ *
  * @author __AUTHOR_NAME__
  */
-
-/**
- * Properties accepted by the BreweryItem component.
- *
- * @typedef {Object} BreweryItemProps
- * @property {Brewery} brewery - The brewery entity to present.
- */
-
-/** @type {BreweryItemProps} */
 const { brewery } = defineProps({
   brewery: { type: Brewery, required: true }
 });
@@ -30,49 +18,20 @@ const { brewery } = defineProps({
 const { t } = useI18n();
 const toast = useToast();
 
-/**
- * Indicates whether the logo served by the branding provider failed to load.
- *
- * @type {import('vue').Ref<boolean>}
- */
-const isLogoUnavailable = ref(false);
+const logoFailed = ref(false);
+const showLogo = computed(() => brewery.urlToLogo !== '' && !logoFailed.value);
+const website = computed(() => brewery.websiteUrl.toString());
 
-/**
- * Indicates whether a logo can be displayed for the brewery.
- *
- * @type {import('vue').ComputedRef<boolean>}
- */
-const hasLogo = computed(() => brewery.urlToLogo !== '' && !isLogoUnavailable.value);
-
-/**
- * Information shared when the user requests to share the brewery.
- *
- * @type {import('vue').ComputedRef<{title: string, text: string, url?: string}>}
- */
 const shareData = computed(() => {
   const data = {
     title: brewery.name,
-    text: [brewery.name, brewery.formattedAddress].filter(part => part !== '').join(' - ')
+    text: [brewery.name, brewery.getFullAddress()].filter(part => part).join(' - ')
   };
-  if (brewery.hasWebsite) data.url = brewery.websiteAddress;
+  if (brewery.hasWebsite()) data.url = website.value;
   return data;
 });
 
-/**
- * Records that the logo could not be displayed, so a fallback icon is shown.
- *
- * @returns {void}
- */
-const onLogoError = () => {
-  isLogoUnavailable.value = true;
-};
-
-/**
- * Copies the information of the brewery to the clipboard.
- *
- * @returns {Promise<void>} A promise that settles once the user has been notified.
- */
-const copyInformationToClipboard = async () => {
+const copyToClipboard = async () => {
   try {
     await navigator.clipboard.writeText(shareData.value.url ?? shareData.value.text);
     toast.add({ severity: 'info', summary: t('brewery.link-copied'), life: 3000 });
@@ -83,13 +42,10 @@ const copyInformationToClipboard = async () => {
 };
 
 /**
- * Shares the brewery through the share capability of the browser.
+ * Shares the brewery with the browser, or copies it to the clipboard when the
+ * Web Share API is not available.
  *
- * @remarks
- * Falls back to copying the information to the clipboard when the Web Share API
- * is not available or the browser rejects the request.
- *
- * @returns {Promise<void>} A promise that settles once the user has been notified.
+ * @returns {Promise<void>}
  */
 const shareInformation = async () => {
   if (navigator.share) {
@@ -98,36 +54,35 @@ const shareInformation = async () => {
       toast.add({ severity: 'success', summary: t('brewery.share-succeeded'), life: 3000 });
       return;
     } catch (error) {
+      // The user closing the share dialog is not an error worth reporting.
       if (error?.name === 'AbortError') return;
       console.error('Failed to share the brewery information:', error);
     }
   }
-  await copyInformationToClipboard();
+  await copyToClipboard();
 };
 </script>
 
 <template>
   <pv-card class="brewery-card" :aria-label="t('brewery.card-label', { name: brewery.name })">
     <template #header>
-      <div class="brewery-card__header">
-        <img v-if="hasLogo"
-             class="brewery-card__logo"
+      <div class="logo-band">
+        <img v-if="showLogo"
+             class="logo"
              :src="brewery.urlToLogo"
              :alt="t('brewery.logo-alt', { name: brewery.name })"
              loading="lazy"
-             @error="onLogoError"/>
-        <i v-else class="pi pi-building brewery-card__logo-fallback" aria-hidden="true"></i>
+             @error="logoFailed = true"/>
+        <i v-else class="pi pi-building logo-placeholder" aria-hidden="true"></i>
       </div>
     </template>
 
     <template #title>
-      <h3 class="brewery-card__title">{{ brewery.name }}</h3>
+      <h3 class="brewery-name">{{ brewery.name }}</h3>
     </template>
 
     <template #subtitle>
-      <span class="brewery-card__subtitle">
-        {{ brewery.hasWebsite ? brewery.websiteAddress : t('brewery.no-website') }}
-      </span>
+      <span class="brewery-website">{{ brewery.hasWebsite() ? website : t('brewery.no-website') }}</span>
     </template>
 
     <template #content>
@@ -135,10 +90,10 @@ const shareInformation = async () => {
     </template>
 
     <template #footer>
-      <div class="brewery-card__actions">
-        <pv-button v-if="brewery.hasWebsite"
+      <div class="card-actions">
+        <pv-button v-if="brewery.hasWebsite()"
                    as="a"
-                   :href="brewery.websiteAddress"
+                   :href="website"
                    target="_blank"
                    rel="noopener noreferrer"
                    :label="t('brewery.go-to-website')"
@@ -146,7 +101,7 @@ const shareInformation = async () => {
                    icon="pi pi-external-link"
                    link
                    class="p-0"/>
-        <span v-else class="brewery-card__action-placeholder">{{ t('brewery.no-website') }}</span>
+        <span v-else class="no-website">{{ t('brewery.no-website') }}</span>
         <pv-button :label="t('brewery.share-information')"
                    :aria-label="t('brewery.share-information-label', { name: brewery.name })"
                    icon="pi pi-share-alt"
@@ -165,6 +120,7 @@ const shareInformation = async () => {
   width: 100%;
 }
 
+/* Makes every card in a row end at the same height. */
 .brewery-card :deep(.p-card-body) {
   display: flex;
   flex-direction: column;
@@ -175,39 +131,39 @@ const shareInformation = async () => {
   flex: 1;
 }
 
-.brewery-card__header {
+.logo-band {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 9rem;
   padding: 1rem;
   background-color: var(--p-surface-100, #f5f5f5);
-  border-radius: var(--p-content-border-radius, 6px) var(--p-content-border-radius, 6px) 0 0;
+  border-radius: 6px 6px 0 0;
 }
 
-.brewery-card__logo {
+.logo {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
 }
 
-.brewery-card__logo-fallback {
+.logo-placeholder {
   font-size: 3rem;
   color: var(--p-text-muted-color, #9e9e9e);
 }
 
-.brewery-card__title {
+.brewery-name {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
 }
 
-.brewery-card__subtitle {
+.brewery-website {
   font-size: 0.875rem;
   overflow-wrap: anywhere;
 }
 
-.brewery-card__actions {
+.card-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -215,7 +171,7 @@ const shareInformation = async () => {
   flex-wrap: wrap;
 }
 
-.brewery-card__action-placeholder {
+.no-website {
   font-size: 0.875rem;
   color: var(--p-text-muted-color, #9e9e9e);
 }

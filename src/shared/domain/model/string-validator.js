@@ -1,40 +1,34 @@
 /**
- * @summary Domain utility that centralizes string-based validation rules.
- * @remarks
- * Keeping these checks in a single place prevents duplicated guard clauses
- * across entities and value objects of the domain layer.
+ * Validation helpers for strings used across the domain.
+ *
  * @author __AUTHOR_NAME__
  */
 export class StringValidator {
     /**
-     * Determines whether a value is a string primitive or a String object.
+     * Checks if a value is a string.
      *
-     * @param {*} value - The value to evaluate.
-     * @returns {boolean} True when the value is a string, false otherwise.
+     * @param {*} value
+     * @returns {boolean}
      */
     static isString(value) {
         return typeof value === 'string' || value instanceof String;
     }
 
     /**
-     * Determines whether a value is a string holding at least one non-whitespace character.
+     * Checks if a value is a string with at least one non-whitespace character.
      *
-     * @param {*} value - The value to evaluate.
-     * @returns {boolean} True when the value is a non-empty string, false otherwise.
+     * @param {*} value
+     * @returns {boolean}
      */
     static isNotEmptyString(value) {
         return StringValidator.isString(value) && value.trim().length > 0;
     }
 
     /**
-     * Converts a technical identifier into a human-friendly label.
+     * Turns a technical value like 'brewery_type' into a readable 'Brewery Type'.
      *
-     * @remarks
-     * Replaces underscores and hyphens with spaces and capitalizes every word,
-     * so provider values such as 'brewery_type' are displayed as 'Brewery Type'.
-     *
-     * @param {string} value - The technical identifier to humanize.
-     * @returns {string} The human-friendly representation of the value.
+     * @param {string} value
+     * @returns {string}
      */
     static toHumanFriendlyLabel(value) {
         if (!StringValidator.isNotEmptyString(value)) return '';

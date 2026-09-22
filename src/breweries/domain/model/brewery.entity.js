@@ -1,103 +1,80 @@
-import { Address } from '@/shared/domain/model/address.js';
-import { Coordinates } from '@/shared/domain/model/coordinates.js';
-import { PhoneNumber } from '@/shared/domain/model/phone-number.js';
 import { StringValidator } from '@/shared/domain/model/string-validator.js';
 import { Url } from '@/shared/domain/model/url.js';
 
 /**
- * Properties accepted when a Brewery entity is created.
+ * A brewery of the Open Brewery DB catalog.
+ * Attribute names follow the JavaScript conventions, not the ones used by the
+ * API: mapping between both is done by the assembler.
  *
- * @typedef {Object} BreweryProps
- * @property {string} id - The unique identifier of the brewery.
- * @property {string} name - The commercial name of the brewery.
- * @property {string} [breweryType] - The type of brewery, for example 'micro' or 'brewpub'.
- * @property {Object|Address} [address] - The postal location of the brewery.
- * @property {string|PhoneNumber} [phone] - The contact telephone number of the brewery.
- * @property {string|Url} [websiteUrl] - The website of the brewery.
- * @property {Object|Coordinates} [coordinates] - The geographic position of the brewery.
- */
-
-/**
- * @summary Domain entity that represents a brewery published in the Open Brewery DB catalog.
- * @remarks
- * The entity is identified by its id and is self-validating: it refuses to be
- * created in an invalid state. Its attributes follow the JavaScript naming
- * conventions in English and are independent from the naming used by the data
- * provider, whose translation is a responsibility of the assembler.
  * @author __AUTHOR_NAME__
  */
 export class Brewery {
     /**
-     * Creates a new Brewery entity.
-     *
-     * @param {BreweryProps} props - The properties used to build the entity.
-     * @throws {Error} When the identifier or the name of the brewery is missing.
+     * @param {Object} props
+     * @throws {Error} if the id or the name is missing.
      */
-    constructor({ id = '', name = '', breweryType = '', address = null, phone = '', websiteUrl = '', coordinates = null }) {
+    constructor({
+                    id = '', name = '', breweryType = '', street = '', city = '', stateProvince = '',
+                    postalCode = '', country = '', phone = '', websiteUrl = '', latitude = null, longitude = null
+                }) {
         if (!StringValidator.isNotEmptyString(id)) throw new Error('Brewery id must be a non-empty string');
         if (!StringValidator.isNotEmptyString(name)) throw new Error('Brewery name must be a non-empty string');
 
         this.id = id;
         this.name = name;
         this.breweryType = breweryType;
-        this.address = address instanceof Address ? address : new Address(address ?? {});
-        this.phone = phone instanceof PhoneNumber ? phone : new PhoneNumber(phone);
+        this.street = street;
+        this.city = city;
+        this.stateProvince = stateProvince;
+        this.postalCode = postalCode;
+        this.country = country;
+        this.phone = phone;
         this.websiteUrl = websiteUrl instanceof Url ? websiteUrl : new Url(websiteUrl);
-        this.coordinates = coordinates instanceof Coordinates ? coordinates : new Coordinates(coordinates ?? {});
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.urlToLogo = '';
     }
 
     /**
-     * Indicates whether the brewery published a website.
-     *
-     * @returns {boolean} True when a valid website is available.
+     * @returns {boolean} true when the brewery published a website.
      */
-    get hasWebsite() {
+    hasWebsite() {
         return !this.websiteUrl.isEmpty();
     }
 
     /**
-     * Returns the type of brewery as a human-friendly label.
-     *
-     * @returns {string} The type of brewery, for example 'Brewpub'.
+     * @returns {string} the brewery type as a readable label, for example 'Brewpub'.
      */
-    get formattedBreweryType() {
+    getFormattedBreweryType() {
         return StringValidator.toHumanFriendlyLabel(this.breweryType);
     }
 
     /**
-     * Returns the complete postal address of the brewery in a single line.
+     * Formats the phone as (000) 000-0000 when it has ten digits.
      *
-     * @returns {string} The formatted address of the brewery.
+     * @returns {string}
      */
-    get formattedAddress() {
-        return this.address.toString();
+    getFormattedPhone() {
+        const digits = String(this.phone ?? '').replace(/\D/g, '');
+        if (digits.length !== 10) return digits;
+        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
     }
 
     /**
-     * Returns the contact telephone number of the brewery formatted for display.
-     *
-     * @returns {string} The formatted telephone number of the brewery.
+     * @returns {string} latitude and longitude, or an empty string when unknown.
      */
-    get formattedPhone() {
-        return this.phone.toString();
+    getFormattedCoordinates() {
+        const latitude = Number.parseFloat(this.latitude);
+        const longitude = Number.parseFloat(this.longitude);
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return '';
+        return `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
     }
 
     /**
-     * Returns the geographic position of the brewery formatted for display.
-     *
-     * @returns {string} The formatted coordinates of the brewery.
+     * @returns {string} the whole address in a single line.
      */
-    get formattedCoordinates() {
-        return this.coordinates.toString();
-    }
-
-    /**
-     * Returns the website of the brewery as a plain string.
-     *
-     * @returns {string} The website of the brewery, or an empty string when it is unknown.
-     */
-    get websiteAddress() {
-        return this.websiteUrl.toString();
+    getFullAddress() {
+        const region = [this.stateProvince, this.postalCode].filter(part => part).join(' ');
+        return [this.street, this.city, region, this.country].filter(part => part).join(', ');
     }
 }

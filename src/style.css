@@ -1,12 +1,4 @@
-/**
- * Global stylesheet of the Open Breweries DB application.
- *
- * @remarks
- * Defines the typographic and colour baseline of the application. Every other
- * style is scoped to the component that owns it, so this file stays limited to
- * document-level concerns.
- * @author __AUTHOR_NAME__
- */
+/* Global styles. Everything else is scoped to its own component. */
 
 *,
 *::before,
@@ -14,17 +6,13 @@
     box-sizing: border-box;
 }
 
-html {
-    -webkit-text-size-adjust: 100%;
-}
-
 body {
     margin: 0;
-    font-family: Roboto, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-family: Roboto, "Segoe UI", system-ui, Arial, sans-serif;
     font-size: 16px;
     line-height: 1.5;
-    color: var(--p-text-color, #212121);
-    background-color: var(--p-surface-50, #fafafa);
+    color: #212121;
+    background-color: #fafafa;
 }
 
 img {

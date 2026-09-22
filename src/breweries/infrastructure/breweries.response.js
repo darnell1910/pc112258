@@ -1,18 +1,15 @@
 import { BreweryResource } from '@/breweries/infrastructure/brewery.resource.js';
 
 /**
- * @summary Response object that wraps the collection of breweries returned by the provider.
- * @remarks
- * Implements the Response pattern. The Open Brewery DB API answers with a bare
- * JSON array, so this object gives that payload an explicit shape and protects
- * the rest of the application from unexpected or malformed responses.
+ * Collection of breweries returned by the provider.
+ * The API answers with a plain JSON array, so this class gives it a shape and
+ * protects the application from malformed payloads.
+ *
  * @author __AUTHOR_NAME__
  */
 export class BreweriesResponse {
     /**
-     * Creates a new BreweriesResponse.
-     *
-     * @param {Array<Object>} [payload=[]] - The collection of brewery records published by the provider.
+     * @param {Array<Object>} [payload=[]]
      */
     constructor(payload = []) {
         /** @type {BreweryResource[]} */
@@ -20,30 +17,17 @@ export class BreweriesResponse {
     }
 
     /**
-     * Builds a response object from the raw answer of the HTTP client.
-     *
-     * @param {import('axios').AxiosResponse} httpResponse - The HTTP response received from the provider.
-     * @returns {BreweriesResponse} The assembled response object.
+     * @param {import('axios').AxiosResponse} httpResponse
+     * @returns {BreweriesResponse}
      */
     static fromHttpResponse(httpResponse) {
         return new BreweriesResponse(httpResponse?.data);
     }
 
     /**
-     * Returns the number of brewery resources contained in the response.
-     *
-     * @returns {number} The size of the collection.
+     * @returns {boolean}
      */
-    get size() {
-        return this.breweries.length;
-    }
-
-    /**
-     * Indicates whether the provider returned no brewery.
-     *
-     * @returns {boolean} True when the collection is empty.
-     */
-    get isEmpty() {
-        return this.size === 0;
+    isEmpty() {
+        return this.breweries.length === 0;
     }
 }

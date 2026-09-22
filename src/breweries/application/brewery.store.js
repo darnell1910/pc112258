@@ -3,71 +3,28 @@ import { BreweriesApi } from '@/breweries/infrastructure/breweries-api.js';
 import { BreweriesRequest } from '@/breweries/infrastructure/breweries.request.js';
 import { BreweryAssembler } from '@/breweries/infrastructure/brewery.assembler.js';
 
-/**
- * Infrastructure adapter used to reach the Open Brewery DB API.
- *
- * @type {BreweriesApi}
- */
 const breweriesApi = new BreweriesApi();
-
-/**
- * Assembler used to translate provider resources into domain entities.
- *
- * @type {BreweryAssembler}
- */
 const breweryAssembler = new BreweryAssembler();
 
 /**
- * Reactive state and use cases exposed by the breweries store.
+ * Store of the breweries sub-domain. Coordinates the API and the assembler, and
+ * keeps the reactive state that the views consume. Routing and Pinia are out of
+ * scope, so it is built with the reactivity of the Composition API.
  *
- * @typedef {Object} BreweryStore
- * @property {import('@/breweries/domain/model/brewery.entity.js').Brewery[]} breweries - The breweries currently loaded.
- * @property {string[]} errors - The messages produced by the failed operations.
- * @property {boolean} isLoading - Indicates whether a retrieval is in progress.
- * @property {boolean} hasBreweries - Indicates whether at least one brewery is available.
- * @property {boolean} hasErrors - Indicates whether the last operation failed.
- * @property {(request?: BreweriesRequest) => Promise<void>} loadBreweries - Retrieves and assembles the breweries.
- */
-
-/**
- * @summary Application service that orchestrates the brewery use cases and holds their state.
- * @remarks
- * Acts as the application layer of the solution: it coordinates the
- * infrastructure adapter and the assembler, and publishes a reactive projection
- * that the presentation layer consumes. Routing and global state libraries are
- * out of the scope of this application, so the store is built with the
- * reactivity primitives of the Vue Composition API.
  * @author __AUTHOR_NAME__
- * @type {BreweryStore}
  */
 export const breweryStore = reactive({
+    /** @type {import('@/breweries/domain/model/brewery.entity.js').Brewery[]} */
     breweries: [],
+    /** @type {string[]} */
     errors: [],
     isLoading: false,
 
     /**
-     * Indicates whether at least one brewery is available.
+     * Loads the breweries and turns them into domain entities.
      *
-     * @returns {boolean} True when the store holds breweries.
-     */
-    get hasBreweries() {
-        return this.breweries.length > 0;
-    },
-
-    /**
-     * Indicates whether the last operation produced errors.
-     *
-     * @returns {boolean} True when the store holds error messages.
-     */
-    get hasErrors() {
-        return this.errors.length > 0;
-    },
-
-    /**
-     * Retrieves the breweries from the provider and projects them as domain entities.
-     *
-     * @param {BreweriesRequest} [request=new BreweriesRequest()] - The criteria applied to the query.
-     * @returns {Promise<void>} A promise that settles once the state has been updated.
+     * @param {BreweriesRequest} [request=new BreweriesRequest()]
+     * @returns {Promise<void>}
      */
     async loadBreweries(request = new BreweriesRequest()) {
         this.isLoading = true;

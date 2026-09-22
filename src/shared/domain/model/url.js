@@ -1,8 +1,7 @@
 /**
- * @summary Immutable value object that represents a well-formed URL inside the domain.
- * @remarks
- * Invalid or missing URLs are normalized to an empty value instead of throwing,
- * because the Open Brewery DB catalog contains breweries without a website.
+ * Value object for a URL. Invalid or missing values become an empty URL,
+ * because many breweries in the catalog have no website.
+ *
  * @author __AUTHOR_NAME__
  */
 export class Url {
@@ -10,14 +9,13 @@ export class Url {
     #value;
 
     /**
-     * Validates whether a value is a well-formed URL.
+     * Checks if a value can be parsed as a URL.
      *
-     * @param {*} value - The candidate URL.
-     * @returns {boolean} True when the value can be parsed as a URL, false otherwise.
+     * @param {*} value
+     * @returns {boolean}
      */
     static isValidUrl(value) {
         if (typeof value !== 'string' && !(value instanceof String)) return false;
-        if (typeof URL.canParse === 'function') return URL.canParse(value);
         try {
             new URL(value);
             return true;
@@ -27,9 +25,7 @@ export class Url {
     }
 
     /**
-     * Creates a new Url value object.
-     *
-     * @param {string} [value=''] - The URL string to wrap.
+     * @param {string} [value='']
      */
     constructor(value = '') {
         this.#value = Url.isValidUrl(value) ? value.trim() : '';
@@ -39,45 +35,29 @@ export class Url {
     /**
      * Returns the host of the URL, without protocol or path.
      *
-     * @returns {string} The host of the URL, or an empty string when the URL is empty.
+     * @returns {string}
      */
-    get host() {
-        if (this.isEmpty()) return '';
-        return new URL(this.#value).host;
+    getHost() {
+        return this.isEmpty() ? '' : new URL(this.#value).host;
     }
 
     /**
-     * Indicates whether the value object holds no URL.
-     *
-     * @returns {boolean} True when the URL is empty.
+     * @returns {boolean}
      */
     isEmpty() {
         return this.#value === '';
     }
 
     /**
-     * Returns the string representation of the URL.
-     *
-     * @returns {string} The wrapped URL.
+     * @returns {string}
      */
     toString() {
         return this.#value;
     }
 
     /**
-     * Returns the primitive value of the URL.
-     *
-     * @returns {string} The wrapped URL.
-     */
-    valueOf() {
-        return this.#value;
-    }
-
-    /**
-     * Compares this value object with another one by value.
-     *
-     * @param {Url} other - The value object to compare against.
-     * @returns {boolean} True when both value objects hold the same URL.
+     * @param {Url} other
+     * @returns {boolean}
      */
     equals(other) {
         return other instanceof Url && this.#value === other.toString();
